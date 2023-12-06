@@ -1,16 +1,17 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import { Column, HasOne, Model, Table } from 'sequelize-typescript';
+import { Profile } from './profile.model';
 
 @Table
 export class User extends Model {
   @Column
-  firstName: string;
+  email: string;
 
-  @Column
-  lastName: string;
+  @HasOne(() => Profile)
+  profile: Profile;
 
   @Column
   provider: string;
 
-  @Column
-  email: string;
+  @Column({ defaultValue: 'bio-data' })
+  onboardStatus: string;
 }
