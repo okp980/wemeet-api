@@ -1,33 +1,37 @@
-import {
-  BadRequestException,
-  HttpException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { SocialAuthDto } from './dto/social-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsersService } from 'src/users/users.service';
 import { OAuth2Client } from 'google-auth-library';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
   async socialLogin(socialAuthDto: SocialAuthDto) {
     try {
       const payload = await this.verify(socialAuthDto.token);
-      const name = payload.name.split(',');
+      const name = payload.name.split(' ');
       const email = payload.email;
       const [user, created] = await this.userService.findOrCreate(
         {
-          firstName: name[0],
-          lastName: name[1],
           email,
           provider: socialAuthDto.provider,
         },
         email,
       );
-      return user;
+      if (created) {
+        await this.userService.createUserProfile(user.id, {
+          firstname: name[0],
+          lastName: name[1],
+        });
+      }
+      const token_payload = { sub: user.id };
+      const access_token = await this.jwtService.signAsync(token_payload);
+      return { access_token, onboard_status: user.onboardStatus };
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException();
