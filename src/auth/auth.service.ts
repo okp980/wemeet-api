@@ -25,13 +25,13 @@ export class AuthService {
       );
       if (created) {
         await this.userService.createUserProfile(user.id, {
-          firstname: name[0],
-          lastName: name[1],
+          firstName: name[1],
+          lastName: name[0],
         });
       }
       const token_payload = { sub: user.id };
       const access_token = await this.jwtService.signAsync(token_payload);
-      return { access_token, onboard_status: user.onboardStatus };
+      return { access_token };
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException();
@@ -50,5 +50,9 @@ export class AuthService {
     const payload = ticket.getPayload();
     this.logger.log('payload', payload);
     return payload;
+  }
+
+  async getProfile(id: number) {
+    return this.userService.findById(id);
   }
 }

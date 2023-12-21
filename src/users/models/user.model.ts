@@ -11,7 +11,4 @@ export class User extends Model {
 
   @Column
   provider: string;
-
-  @Column({ defaultValue: 'bio-data' })
-  onboardStatus: string;
 }

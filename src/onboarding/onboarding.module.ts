@@ -22,6 +22,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [OnboardingController],
-  providers: [OnboardingService, { provide: APP_GUARD, useClass: AuthGuard }],
+  providers: [OnboardingService],
 })
 export class OnboardingModule {}
