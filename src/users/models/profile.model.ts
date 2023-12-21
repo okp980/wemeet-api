@@ -11,6 +11,9 @@ import { User } from './user.model';
 @Table
 export class Profile extends Model {
   @Column
+  image: string;
+
+  @Column
   firstName: string;
 
   @Column

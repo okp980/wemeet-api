@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OnboardingModule } from './onboarding/onboarding.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -14,7 +15,11 @@ import { OnboardingModule } from './onboarding/onboarding.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         dialect: 'postgres',
-        uri: configService.get('POSTGRES_URI'),
+        host: 'localhost',
+        port: configService.get('POSTGRES_PORT'),
+        username: configService.get('POSTGRES_USER'),
+        password: configService.get('POSTGRES_PASSWORD'),
+        database: configService.get('POSTGRES_DB'),
         autoLoadModels: true,
         synchronize: true,
       }),
@@ -23,6 +28,7 @@ import { OnboardingModule } from './onboarding/onboarding.module';
     UsersModule,
     AuthModule,
     OnboardingModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

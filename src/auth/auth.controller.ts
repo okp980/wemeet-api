@@ -1,15 +1,14 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
+  Get,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SocialAuthDto } from './dto/social-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -18,5 +17,11 @@ export class AuthController {
   @Post('social-login')
   socialLogin(@Body() socialAuthDto: SocialAuthDto) {
     return this.authService.socialLogin(socialAuthDto);
+  }
+
+  @Get('profile')
+  @UseGuards(AuthGuard)
+  async getProfile(@Request() req: any) {
+    return req.user;
   }
 }
