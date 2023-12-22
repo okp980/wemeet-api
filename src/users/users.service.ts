@@ -1,5 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Express } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
@@ -65,12 +67,23 @@ export class UsersService {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException();
 
-    const key = `${updateProfile.firstName}-${updateProfile.lastName}-${id}`;
-    const buffer = await this.fileService.compressImage(file.buffer, 800);
-    await this.fileService.delete(key);
-    const image = await this.fileService.upload({ ...file, buffer }, key);
-    const profile = await this.profileModel.findOne({ where: { userId: id } });
-    profile.update({ ...updateProfile, image });
+    if (file) {
+      const key = uuidv4();
+      const buffer = await this.fileService.compressImage(file.buffer, 800);
+      await this.fileService.delete(user.profile.image);
+      const image = await this.fileService.upload({ ...file, buffer }, key);
+      const profile = await this.profileModel.findOne({
+        where: { userId: id },
+      });
+      profile.update({ ...updateProfile, image });
+      await profile.save();
+      return profile;
+    }
+    const profile = await this.profileModel.findOne({
+      where: { userId: id },
+    });
+
+    profile.update(updateProfile);
     await profile.save();
     return profile;
   }
