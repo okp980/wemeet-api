@@ -7,10 +7,13 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { FileModule } from './file/file.module';
+import { MeetRequestModule } from './meet-request/meet-request.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    EventEmitterModule.forRoot(),
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -29,6 +32,7 @@ import { FileModule } from './file/file.module';
     AuthModule,
     OnboardingModule,
     FileModule,
+    MeetRequestModule,
   ],
   controllers: [AppController],
   providers: [AppService],
