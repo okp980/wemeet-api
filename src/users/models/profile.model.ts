@@ -28,11 +28,8 @@ export class Profile extends Model {
   @Column(DataType.ARRAY(DataType.TEXT))
   passion: string[];
 
-  @Column
+  @Column({ defaultValue: true })
   getNotifications: boolean;
-
-  @Column
-  email: string;
 
   @ForeignKey(() => User)
   @Column

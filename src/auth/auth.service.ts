@@ -20,6 +20,7 @@ export class AuthService {
         {
           email,
           provider: socialAuthDto.provider,
+          fcmToken: socialAuthDto.fcmToken,
         },
         email,
       );

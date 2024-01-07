@@ -8,6 +8,8 @@ import { User } from './models/user.model';
 import { Profile } from './models/profile.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FileService } from 'src/file/file.service';
+import { GetUsersDto } from './dto/get-users.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +23,30 @@ export class UsersService {
   ) {}
   async create(createUserDto: any) {
     return this.userModel.create(createUserDto);
+  }
+  async findAll({ limit = 10, page = 1 }: GetUsersDto, id: number) {
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const { count, rows } = await this.userModel.findAndCountAll({
+      limit,
+      offset: startIndex,
+      include: Profile,
+      where: { id: { [Op.ne]: id } },
+    });
+
+    const remains = Math.max(count - endIndex, 0);
+    const before = Math.max(page - 1, 0);
+    const totalPages = Math.ceil(count / limit);
+
+    return {
+      total: count,
+      currentPage: page,
+      nextPage: remains >= 1 ? page + 1 : null,
+      previousPage: before >= 1 ? page - 1 : null,
+      totalPages,
+      data: rows,
+    };
   }
   async findOrCreate(
     createUserDto: any,
@@ -70,7 +96,9 @@ export class UsersService {
     if (file) {
       const key = uuidv4();
       const buffer = await this.fileService.compressImage(file.buffer, 800);
-      await this.fileService.delete(user.profile.image);
+      if (user.profile.image) {
+        await this.fileService.delete(user.profile.image);
+      }
       const image = await this.fileService.upload({ ...file, buffer }, key);
       const profile = await this.profileModel.findOne({
         where: { userId: id },

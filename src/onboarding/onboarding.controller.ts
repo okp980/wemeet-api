@@ -40,8 +40,6 @@ export class OnboardingController {
     image: Express.Multer.File,
     @Body() bioData: BioDataDTO,
   ) {
-    console.log(image);
-
     return this.onboardingService.bioData(request.user, bioData, image);
   }
   @Post('gender')
