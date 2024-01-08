@@ -1,6 +1,6 @@
 import { Column, HasMany, HasOne, Model, Table } from 'sequelize-typescript';
 import { Profile } from './profile.model';
-import { Meet } from 'src/meet-request/models/meet.model';
+import { MeetRequest } from 'src/meet-request/models/meet-request.model';
 
 @Table
 export class User extends Model {
@@ -16,9 +16,12 @@ export class User extends Model {
   @HasOne(() => Profile)
   profile: Profile;
 
-  @HasMany(() => Meet, { foreignKey: 'creatorId', as: 'sentRequests' })
-  sentRequests: Meet[];
+  @HasMany(() => MeetRequest, { foreignKey: 'creatorId', as: 'sentRequests' })
+  sentRequests: MeetRequest[];
 
-  @HasMany(() => Meet, { foreignKey: 'recipientId', as: 'recievedRequests' })
-  recievedRequests: Meet[];
+  @HasMany(() => MeetRequest, {
+    foreignKey: 'recipientId',
+    as: 'recievedRequests',
+  })
+  recievedRequests: MeetRequest[];
 }

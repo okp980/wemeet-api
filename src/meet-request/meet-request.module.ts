@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MeetRequestService } from './meet-request.service';
 import { MeetRequestController } from './meet-request.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Meet } from './models/meet.model';
+import { MeetRequest } from './models/meet-request.model';
 import { MeetListener } from './listeners/meet.listener';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -10,7 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Meet]),
+    SequelizeModule.forFeature([MeetRequest]),
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -24,5 +24,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
   controllers: [MeetRequestController],
   providers: [MeetRequestService, MeetListener],
+  exports: [MeetRequestService],
 })
 export class MeetRequestModule {}

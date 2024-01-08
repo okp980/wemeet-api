@@ -9,6 +9,7 @@ import { OnboardingModule } from './onboarding/onboarding.module';
 import { FileModule } from './file/file.module';
 import { MeetRequestModule } from './meet-request/meet-request.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MeetModule } from './meet/meet.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     OnboardingModule,
     FileModule,
     MeetRequestModule,
+    MeetModule,
   ],
   controllers: [AppController],
   providers: [AppService],
