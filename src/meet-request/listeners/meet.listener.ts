@@ -15,7 +15,7 @@ admin.initializeApp({
 export class MeetListener {
   constructor(private usersService: UsersService) {}
 
-  @OnEvent('meet.created', { async: true })
+  @OnEvent('meet-request.created', { async: true })
   async handleMeetRequestCreatedEvent({
     recipient,
     creator,
@@ -37,7 +37,7 @@ export class MeetListener {
     });
   }
 
-  @OnEvent('meet.updated', { async: true })
+  @OnEvent('meet-request.updated', { async: true })
   async handleMeetRequestUpdatedEvent({
     recipient,
     creator,

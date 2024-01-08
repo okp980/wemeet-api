@@ -9,7 +9,7 @@ import {
 import { User } from 'src/users/models/user.model';
 
 @Table
-export class Meet extends Model {
+export class MeetRequest extends Model {
   @ForeignKey(() => User)
   @Column
   creatorId: number;

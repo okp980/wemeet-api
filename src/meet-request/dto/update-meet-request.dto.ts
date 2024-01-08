@@ -5,7 +5,11 @@ export enum RequestStatus {
   REJECTED = 'rejected',
 }
 
+export enum RequestUpdateStatus {
+  ACCEPTED = 'accepted',
+  REJECTED = 'rejected',
+}
 export class UpdateMeetRequestDto {
-  @IsEnum(RequestStatus)
+  @IsEnum(RequestUpdateStatus)
   status: string;
 }

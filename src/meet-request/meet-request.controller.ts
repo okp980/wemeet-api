@@ -38,8 +38,8 @@ export class MeetRequestController {
 
   @Patch(':id')
   async update(
-    @Body() @Param('id') id: string,
-    updateRequestDto: UpdateMeetRequestDto,
+    @Body() updateRequestDto: UpdateMeetRequestDto,
+    @Param('id') id: string,
   ) {
     return this.MeetRequestService.update(+id, updateRequestDto);
   }
