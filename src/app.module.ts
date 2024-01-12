@@ -10,6 +10,9 @@ import { FileModule } from './file/file.module';
 import { MeetRequestModule } from './meet-request/meet-request.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MeetModule } from './meet/meet.module';
+import { PresenceModule } from './presence/presence.module';
+import { MessageModule } from './message/message.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { MeetModule } from './meet/meet.module';
     FileModule,
     MeetRequestModule,
     MeetModule,
+    PresenceModule,
+    MessageModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
