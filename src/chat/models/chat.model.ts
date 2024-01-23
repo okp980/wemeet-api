@@ -6,7 +6,7 @@ import { Message } from 'src/message/models/message.model';
 @Table
 export class Chat extends Model {
   @BelongsToMany(() => User, () => UserChat)
-  user: User[];
+  users: User[];
 
   @HasMany(() => Message)
   messages: Message[];

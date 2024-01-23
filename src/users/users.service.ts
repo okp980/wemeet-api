@@ -115,4 +115,10 @@ export class UsersService {
     await profile.save();
     return profile;
   }
+
+  async clearSocketId(id: number) {
+    const user = await this.findById(id);
+    user.socketId = null;
+    return await user.save();
+  }
 }
