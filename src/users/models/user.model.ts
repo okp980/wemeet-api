@@ -23,6 +23,9 @@ export class User extends Model {
   @Column
   fcmToken: string;
 
+  @Column
+  socketId: string;
+
   @HasOne(() => Profile)
   profile: Profile;
 

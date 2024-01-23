@@ -15,7 +15,7 @@ import { UsersModule } from 'src/users/users.module';
       useFactory: (configService: ConfigService) => ({
         global: true,
         secret: configService.get('TOKEN_SECRET'),
-        signOptions: { expiresIn: '3600s' },
+        signOptions: { expiresIn: configService.get('EXPIRE_DURATION') },
       }),
       inject: [ConfigService],
     }),
