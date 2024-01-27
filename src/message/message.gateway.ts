@@ -17,6 +17,7 @@ import { UsersService } from 'src/users/users.service';
 import { ChatService } from 'src/chat/chat.service';
 import { GetMessagesDto } from './dto/get-messages.dto';
 import { CreateChatDto } from 'src/chat/dto/create-chat.dto';
+import { Message } from './models/message.model';
 
 @WebSocketGateway()
 export class MessageGateway
@@ -74,35 +75,45 @@ export class MessageGateway
 
   @SubscribeMessage('createMessage')
   async handleCreateMessage(
-    @MessageBody() createMessageDto: CreateMessageDto,
+    @MessageBody() { friendId, content }: CreateMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const recipient = await this.getMessageRecipient(
-      createMessageDto.chat,
-      createMessageDto.user,
-    );
-    const message = await this.messageService.create(createMessageDto);
-    client.to(recipient.socketId).emit('newMessage', message);
+    const friend = await this.userService.findById(friendId);
+    let chat = await this.chatService.getChatFromUsers({
+      userId: client.data.user.id,
+      friendId,
+    });
+    if (!chat) {
+      chat = await this.chatService.createChat({
+        userId: client.data.user.id,
+        friendId,
+      });
+    }
+    const message = await this.messageService.create({
+      content,
+      chatId: chat.id,
+      userId: client.data.user.id,
+    });
+
+    const userChats = await this.chatService.getUserChats(client.data.user.id);
+    const friendChats = await this.chatService.getUserChats(friendId);
+    client.to(client.data.user.socketId).emit('chats', userChats);
+    client.to(friend.socketId).emit('chats', friendChats);
+    client.to(friend.socketId).emit('message', message);
+
+    return message;
   }
 
   @SubscribeMessage('messages')
-  handleMessages(@MessageBody() getMessagesDto: GetMessagesDto) {
-    return this.messageService.getChatMessages(getMessagesDto);
-  }
-
-  @SubscribeMessage('createChat')
-  async handleCreateChat(
-    @MessageBody() chatDto: Omit<CreateChatDto, 'userId'>,
+  handleMessages(
+    @MessageBody() { friendId, page }: GetMessagesDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const friend = await this.userService.findById(chatDto.friendId);
-    const chat = await this.chatService.createChat({
-      ...chatDto,
+    return this.messageService.getChatMessages({
       userId: client.data.user.id,
+      friendId,
+      page,
     });
-    client.to(friend.socketId).emit('newChat', chat);
-    console.log('createChat was called', chat);
-    return chat;
   }
 
   @SubscribeMessage('chats')
@@ -110,6 +121,8 @@ export class MessageGateway
     @MessageBody() getMessagesDto: GetMessagesDto,
     @ConnectedSocket() client: Socket,
   ) {
+    console.log('==================== was called ===================');
+
     return this.chatService.getUserChats(client.data.user.id);
   }
 
