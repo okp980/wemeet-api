@@ -4,7 +4,10 @@ export class CreateMessageDto {
   @IsString()
   content: string;
   @IsNumber()
-  user: number;
+  userId: number;
+  @IsNumber()
+  friendId: number;
+  // TODO:remove
   @IsNumber()
   chat: number;
 }

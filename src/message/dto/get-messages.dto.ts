@@ -1,4 +1,4 @@
 export class GetMessagesDto {
-  chatId: number;
+  friendId: number;
   page: number;
 }
