@@ -4,7 +4,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import sharp from 'sharp';
+// import sharp from 'sharp';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -44,14 +44,15 @@ export class FileService {
     await this.client.send(command);
   }
   compressImage(image: Buffer, size: number) {
-    const builder = sharp(image);
-    builder.resize(size);
-    builder.png({
-      compressionLevel: 9,
-      adaptiveFiltering: true,
-      force: true,
-      quality: 80,
-    });
-    return builder.toBuffer();
+    //   const builder = sharp(image);
+    //   builder.resize(size);
+    //   builder.png({
+    //     compressionLevel: 9,
+    //     adaptiveFiltering: true,
+    //     force: true,
+    //     quality: 80,
+    //   });
+    //   return builder.toBuffer();
+    return image;
   }
 }

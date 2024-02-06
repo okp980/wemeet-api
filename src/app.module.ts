@@ -13,16 +13,18 @@ import { MeetModule } from './meet/meet.module';
 import { PresenceModule } from './presence/presence.module';
 import { MessageModule } from './message/message.module';
 import { ChatModule } from './chat/chat.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.register({ isGlobal: true }),
     EventEmitterModule.forRoot(),
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         dialect: 'postgres',
-        host: 'localhost',
+        host: configService.get('POSTGRES_HOST'),
         port: configService.get('POSTGRES_PORT'),
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),

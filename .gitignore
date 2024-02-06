@@ -35,3 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 wemeet-firebase-adminsdk.json
+
+# ENV
+.env
+.env.production

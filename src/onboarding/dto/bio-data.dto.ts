@@ -1,10 +1,10 @@
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class BioDataDTO {
   @IsString()
   firstName: string;
   @IsString()
   lastName: string;
-  @IsString()
-  dateOfBirth: string;
+  @IsNumber()
+  age: number;
 }
