@@ -3,6 +3,8 @@ import { SocialAuthDto } from './dto/social-auth.dto';
 import { UsersService } from 'src/users/users.service';
 import { OAuth2Client } from 'google-auth-library';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateProfileDto } from 'src/users/dto/update-profile.dto';
+import { UpdateMeDto } from 'src/users/dto/update-me.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +16,6 @@ export class AuthService {
   async socialLogin(socialAuthDto: SocialAuthDto) {
     try {
       const payload = await this.verify(socialAuthDto.token);
-      const name = payload.name.split(' ');
       const email = payload.email;
       const [user, created] = await this.userService.findOrCreate(
         {
@@ -25,10 +26,7 @@ export class AuthService {
         email,
       );
       if (created) {
-        await this.userService.createUserProfile(user.id, {
-          firstName: name[1],
-          lastName: name[0],
-        });
+        await user.$create('profile', { name: payload.name });
       }
       const token_payload = { sub: user.id };
       const access_token = await this.jwtService.signAsync(token_payload);
@@ -55,5 +53,11 @@ export class AuthService {
 
   async getProfile(id: number) {
     return this.userService.findById(id);
+  }
+
+  async updateProfile(user: any, { name, getNotifications, bio }: UpdateMeDto) {
+    const profile = await user.$get('profile');
+    await profile.update({ name, getNotifications, bio });
+    return profile;
   }
 }

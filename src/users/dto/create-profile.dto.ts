@@ -1,11 +1,9 @@
 export class CreateProfileDto {
-  firstName: string;
-
-  lastName: string;
+  name: string;
 
   gender: string;
 
-  dateOfBirth: string;
+  age: number;
 
   passion: string[];
 

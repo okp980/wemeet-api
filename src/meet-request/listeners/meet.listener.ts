@@ -26,7 +26,7 @@ export class MeetListener {
       token: reciever.fcmToken,
       notification: {
         title: 'New Meet',
-        body: `${sender?.profile?.firstName} sent a request`,
+        body: `${sender?.profile?.name} sent a request`,
       },
       data: {
         type: 'MATCH_SCREEN',
@@ -48,7 +48,7 @@ export class MeetListener {
       token: sender.fcmToken,
       notification: {
         title: 'Meet Accepted',
-        body: `${reciever?.profile?.firstName} has accepted your request`,
+        body: `${reciever?.profile?.name} has accepted your request`,
       },
       data: {
         type: 'MATCH_SCREEN',

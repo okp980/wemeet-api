@@ -14,16 +14,16 @@ export class Profile extends Model {
   image: string;
 
   @Column
-  firstName: string;
-
-  @Column
-  lastName: string;
+  name: string;
 
   @Column
   gender: string;
 
   @Column
-  dateOfBirth: string;
+  bio: string;
+
+  @Column
+  age: number;
 
   @Column(DataType.ARRAY(DataType.TEXT))
   passion: string[];

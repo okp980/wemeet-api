@@ -10,6 +10,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { FileService } from 'src/file/file.service';
 import { GetUsersDto } from './dto/get-users.dto';
 import { Op } from 'sequelize';
+import { UpdateNotificationDto } from './dto/update-notification.dto';
 
 @Injectable()
 export class UsersService {
@@ -69,20 +70,6 @@ export class UsersService {
 
   async createUser(createUserDto: any) {
     return await this.userModel.create(createUserDto);
-  }
-
-  async createUserProfile(
-    id: number,
-    userProfile: { firstName: string; lastName: string },
-  ) {
-    const user = await this.findById(id);
-    if (!user) throw new NotFoundException();
-    const profile = await this.profileModel.create({
-      ...userProfile,
-      userId: id,
-    });
-
-    return profile;
   }
 
   async updateUserProfile(

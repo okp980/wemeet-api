@@ -72,6 +72,7 @@ export class MessageGateway
     const chat = await this.chatService.getChat(chatId);
     return chat.users.find((user) => user.id !== creator);
   }
+  //\
 
   @SubscribeMessage('createMessage')
   async handleCreateMessage(
@@ -121,8 +122,6 @@ export class MessageGateway
     @MessageBody() getMessagesDto: GetMessagesDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('==================== was called ===================');
-
     return this.chatService.getUserChats(client.data.user.id);
   }
 
