@@ -15,3 +15,8 @@ export class SocialAuthDto {
   @IsOptional()
   fcmToken: string;
 }
+
+export class AuthDto {
+  @ApiProperty()
+  access_token: string;
+}

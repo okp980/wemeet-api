@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { MeController, UsersController } from './users.controller';
+import { UsersController } from './users.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import { Profile } from './models/profile.model';
@@ -23,7 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
   ],
-  controllers: [UsersController, MeController],
+  controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService, JwtModule],
 })
