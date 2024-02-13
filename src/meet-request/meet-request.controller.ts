@@ -14,7 +14,10 @@ import { MeetRequestService } from './meet-request.service';
 import { CreateMeetRequestDto } from './dto/create-meet-request.dto';
 import { UpdateMeetRequestDto } from './dto/update-meet-request.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Meet Request')
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('meet-requests')
 export class MeetRequestController {

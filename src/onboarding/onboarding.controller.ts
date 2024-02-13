@@ -18,7 +18,10 @@ import { NotificationDTO } from './dto/notification.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Onborading')
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('onboarding')
 export class OnboardingController {
