@@ -5,6 +5,7 @@ import {
   HasOne,
   Model,
   Table,
+  Unique,
 } from 'sequelize-typescript';
 import { Profile } from './profile.model';
 import { MeetRequest } from 'src/meet-request/models/meet-request.model';
@@ -14,8 +15,12 @@ import { Message } from 'src/message/models/message.model';
 
 @Table
 export class User extends Model {
+  @Unique
   @Column
   email: string;
+
+  @Column
+  password: string;
 
   @Column
   provider: string;

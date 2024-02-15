@@ -16,7 +16,7 @@ import { GetUsersDto } from './dto/get-users.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users')
-@ApiBearerAuth('Auth0')
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {

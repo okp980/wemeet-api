@@ -30,7 +30,6 @@ import { CacheModule } from '@nestjs/cache-manager';
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         autoLoadModels: true,
-        synchronize: true,
       }),
       inject: [ConfigService],
     }),
