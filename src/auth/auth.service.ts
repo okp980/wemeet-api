@@ -1,10 +1,16 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { SocialAuthDto } from './dto/social-auth.dto';
 import { UsersService } from 'src/users/users.service';
 import { OAuth2Client } from 'google-auth-library';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateProfileDto } from 'src/users/dto/update-profile.dto';
 import { UpdateMeDto } from 'src/users/dto/update-me.dto';
+import { LoginDto, RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +19,40 @@ export class AuthService {
     private userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
+  async register({ email, password, name }: RegisterDto) {
+    let user = await this.userService.findOne({ where: { email } });
+    if (user) {
+      throw new ForbiddenException({ message: 'User already registered' });
+    }
+    const hashedPassword = await this.userService.hashPassword(password);
+    user = await this.userService.create({
+      email,
+      password: hashedPassword,
+      provider: 'email',
+    });
+    user.$create('profile', { name });
+    const token_payload = { sub: user.id };
+    const access_token = await this.jwtService.signAsync(token_payload);
+    return { access_token };
+  }
+
+  async login({ email, password }: LoginDto) {
+    const user = await this.userService.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException();
+    }
+    const correct = await this.userService.comparePassword(
+      password,
+      user.password,
+    );
+    if (!correct) {
+      throw new BadRequestException();
+    }
+    const token_payload = { sub: user.id };
+    const access_token = await this.jwtService.signAsync(token_payload);
+    return { access_token };
+  }
+
   async socialLogin(socialAuthDto: SocialAuthDto) {
     try {
       const payload = await this.verify(socialAuthDto.token);
@@ -47,7 +87,6 @@ export class AuthService {
       ],
     });
     const payload = ticket.getPayload();
-    this.logger.log('payload', payload);
     return payload;
   }
 

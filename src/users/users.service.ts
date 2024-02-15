@@ -1,6 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Express } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import { Op } from 'sequelize';
+import bcrypt from 'bcrypt';
 
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -9,7 +11,6 @@ import { Profile } from './models/profile.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FileService } from 'src/file/file.service';
 import { GetUsersDto } from './dto/get-users.dto';
-import { Op } from 'sequelize';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 
 @Injectable()
@@ -101,6 +102,16 @@ export class UsersService {
     profile.update(updateProfile);
     await profile.save();
     return profile;
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, 10);
+  }
+  async comparePassword(
+    password: string,
+    hashedPassord: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(password, hashedPassord);
   }
 
   async clearSocketId(id: number) {
