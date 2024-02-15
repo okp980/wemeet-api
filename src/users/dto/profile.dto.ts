@@ -10,7 +10,7 @@ export class ProfileDto {
   @ApiProperty()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['male', 'female'] })
   gender: string;
 
   @ApiProperty()
