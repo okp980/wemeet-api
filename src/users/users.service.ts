@@ -26,7 +26,10 @@ export class UsersService {
   async create(createUserDto: any) {
     return this.userModel.create(createUserDto);
   }
-  async findAll({ limit = 10, page = 1 }: GetUsersDto, id: number) {
+  async findAll(
+    { limit = 10, page = 1 }: GetUsersDto,
+    id: number,
+  ): Promise<any> {
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
 
@@ -47,7 +50,7 @@ export class UsersService {
       nextPage: remains >= 1 ? page + 1 : null,
       previousPage: before >= 1 ? page - 1 : null,
       totalPages,
-      data: rows,
+      results: rows,
     };
   }
   async findOrCreate(
