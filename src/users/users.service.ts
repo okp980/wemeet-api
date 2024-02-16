@@ -10,8 +10,9 @@ import { User } from './models/user.model';
 import { Profile } from './models/profile.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FileService } from 'src/file/file.service';
-import { GetUsersDto } from './dto/get-users.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { PaginatedQueryDto } from 'src/shared/dto/paginated.dto';
+import { PaginatedService } from 'src/shared/paginated.service';
 
 @Injectable()
 export class UsersService {
@@ -22,36 +23,27 @@ export class UsersService {
     @InjectModel(Profile)
     private profileModel: typeof Profile,
     private fileService: FileService,
+    private paginatedService: PaginatedService,
   ) {}
   async create(createUserDto: any) {
     return this.userModel.create(createUserDto);
   }
   async findAll(
-    { limit = 10, page = 1 }: GetUsersDto,
+    { limit = 10, page = 1 }: PaginatedQueryDto,
     id: number,
   ): Promise<any> {
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    const { count, rows } = await this.userModel.findAndCountAll({
-      limit,
-      offset: startIndex,
-      include: Profile,
-      where: { id: { [Op.ne]: id } },
-    });
-
-    const remains = Math.max(count - endIndex, 0);
-    const before = Math.max(page - 1, 0);
-    const totalPages = Math.ceil(count / limit);
-
-    return {
-      total: count,
-      currentPage: page,
-      nextPage: remains >= 1 ? page + 1 : null,
-      previousPage: before >= 1 ? page - 1 : null,
-      totalPages,
-      results: rows,
-    };
+    return this.paginatedService.getPaginated(
+      { page, limit },
+      async (startIndex: number, limit: number) => {
+        return await this.userModel.findAndCountAll({
+          limit,
+          offset: startIndex,
+          include: Profile,
+          where: { id: { [Op.ne]: id } },
+          attributes: { exclude: ['password', 'socketId', 'fcmToken'] },
+        });
+      },
+    );
   }
   async findOrCreate(
     createUserDto: any,
@@ -65,7 +57,10 @@ export class UsersService {
   }
 
   async findById(id: number) {
-    return this.userModel.findByPk(id, { include: Profile });
+    return this.userModel.findByPk(id, {
+      include: Profile,
+      attributes: { exclude: ['password', 'socketId', 'fcmToken'] },
+    });
   }
 
   async findOne(arg: any) {

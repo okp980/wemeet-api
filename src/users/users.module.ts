@@ -7,11 +7,13 @@ import { Profile } from './models/profile.model';
 import { FileModule } from 'src/file/file.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([User]),
     SequelizeModule.forFeature([Profile]),
+    SharedModule,
     FileModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

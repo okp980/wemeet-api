@@ -14,6 +14,7 @@ import { PresenceModule } from './presence/presence.module';
 import { MessageModule } from './message/message.module';
 import { ChatModule } from './chat/chat.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     PresenceModule,
     MessageModule,
     ChatModule,
+    SharedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
