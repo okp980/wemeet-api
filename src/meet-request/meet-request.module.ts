@@ -7,10 +7,12 @@ import { MeetListener } from './listeners/meet.listener';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([MeetRequest]),
+    SharedModule,
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

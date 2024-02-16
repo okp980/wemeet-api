@@ -10,6 +10,7 @@ import { MeetRequestUpdatedEvent } from './events/meet-request.updated.event';
 import { Profile } from 'src/users/models/profile.model';
 import { Op } from 'sequelize';
 import { GetMeetRequestDto } from './dto/get-meet-request.dto';
+import { PaginatedService } from 'src/shared/paginated.service';
 
 @Injectable()
 export class MeetRequestService {
@@ -18,13 +19,21 @@ export class MeetRequestService {
     @InjectModel(MeetRequest)
     private meetRequestModel: typeof MeetRequest,
     private eventEmitter: EventEmitter2,
+    private paginatedService: PaginatedService,
   ) {}
 
-  async find(userId: number, { status }) {
-    return await this.meetRequestModel.findAll({
-      where: { status, recipientId: userId },
-      include: [{ model: User, as: 'creator', include: [Profile] }],
-    });
+  async find(userId: number, { status, page, limit }: GetMeetRequestDto) {
+    return this.paginatedService.getPaginated(
+      { page, limit },
+      async (startIndex: number, limit: number) => {
+        return await this.meetRequestModel.findAndCountAll({
+          where: { status, recipientId: userId },
+          include: [{ model: User, as: 'creator', include: [Profile] }],
+          limit,
+          offset: startIndex,
+        });
+      },
+    );
   }
   async findOne(id: number) {
     return await this.meetRequestModel.findByPk(id, { include: User });
@@ -91,37 +100,26 @@ export class MeetRequestService {
   }
 
   async findMeets(userId: number, { limit = 10, page = 1 }: GetMeetRequestDto) {
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const { count, rows } = await this.meetRequestModel.findAndCountAll({
-      limit,
-      offset: startIndex,
-      where: {
-        status: 'accepted',
-        [Op.or]: [{ recipientId: userId }, { creatorId: userId }],
+    return this.paginatedService.getPaginated(
+      { page, limit },
+      async (startIndex: number, limit: number) => {
+        return await this.meetRequestModel.findAndCountAll({
+          limit,
+          offset: startIndex,
+          where: {
+            status: 'accepted',
+            [Op.or]: [{ recipientId: userId }, { creatorId: userId }],
+          },
+          include: [
+            { model: User, as: 'creator', include: [Profile] },
+            { model: User, as: 'recipient', include: [Profile] },
+          ],
+        });
       },
-      include: [
-        { model: User, as: 'creator', include: [Profile] },
-        { model: User, as: 'recipient', include: [Profile] },
-      ],
-    });
-
-    const remains = Math.max(count - endIndex, 0);
-    const before = Math.max(page - 1, 0);
-    const totalPages = Math.ceil(count / limit);
-
-    const meets = rows.map((row) =>
-      row.creator.id === userId ? row.recipient : row.creator,
+      (rows) =>
+        rows.map((row) =>
+          row.creator.id === userId ? row.recipient : row.creator,
+        ),
     );
-    this.logger.log('== meets ==', meets);
-
-    return {
-      total: count,
-      currentPage: page,
-      nextPage: remains >= 1 ? page + 1 : null,
-      previousPage: before >= 1 ? page - 1 : null,
-      totalPages,
-      data: meets,
-    };
   }
 }

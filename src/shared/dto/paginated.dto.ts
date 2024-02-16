@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PaginatedQueryDto {
-  @ApiProperty({ default: 1 })
+  @ApiProperty({ default: 10 })
   limit?: number;
 
   @ApiProperty({ default: 1 })

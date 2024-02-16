@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { GetUsersDto } from './dto/get-users.dto';
 import {
   ApiBearerAuth,
   ApiExtraModels,
@@ -23,9 +22,9 @@ import {
   ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { PaginatedDto } from 'src/shared/dto/paginated.dto';
-import { UserDto } from './dto/user.dto';
+import { PaginatedDto, PaginatedQueryDto } from 'src/shared/dto/paginated.dto';
 import { UnauthenticatedDto } from 'src/auth/dto/auth.dto';
+import { UserDto } from './dto/user.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -60,7 +59,7 @@ export class UsersController {
   })
   @Get()
   findAll(
-    @Query() query: GetUsersDto,
+    @Query() query: PaginatedQueryDto,
     @Req() request: any,
   ): Promise<PaginatedDto<UserDto>> {
     return this.usersService.findAll(query, request.user.id);
