@@ -57,19 +57,23 @@ export class UsersService {
   }
 
   async findById(id: number) {
-    return this.userModel.findByPk(id, {
+    const user = await this.userModel.findByPk(id, {
       include: Profile,
       attributes: { exclude: ['password', 'socketId', 'fcmToken'] },
     });
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
   async findOne(arg: any) {
-    return this.userModel.findOne(arg);
+    const user = await this.userModel.findOne(arg);
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
-  async createUser(createUserDto: any) {
-    return await this.userModel.create(createUserDto);
-  }
+  // async createUser(createUserDto: any) {
+  //   return await this.userModel.create(createUserDto);
+  // }
 
   async updateUserProfile(
     id: number,
