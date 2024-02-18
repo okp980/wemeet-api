@@ -27,6 +27,6 @@ import { SharedModule } from 'src/shared/shared.module';
   ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService, JwtModule],
+  exports: [UsersService, JwtModule, SequelizeModule],
 })
 export class UsersModule {}

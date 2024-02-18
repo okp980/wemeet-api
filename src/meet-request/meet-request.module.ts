@@ -12,6 +12,7 @@ import { SharedModule } from 'src/shared/shared.module';
 @Module({
   imports: [
     SequelizeModule.forFeature([MeetRequest]),
+    UsersModule,
     SharedModule,
     UsersModule,
     JwtModule.registerAsync({
