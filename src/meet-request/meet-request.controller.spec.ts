@@ -4,13 +4,10 @@ import { MeetRequestService } from './meet-request.service';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { getModelToken } from '@nestjs/sequelize';
 import { MeetRequest } from './models/meet-request.model';
-import {
-  meetRequestStub,
-  paginatedResultStub,
-  query,
-} from './stub/meet-request.stub';
+import { meetRequestStub, query } from './stub/meet-request.stub';
 import { CreateMeetRequestDto } from './dto/create-meet-request.dto';
 import { UpdateMeetRequestDto } from './dto/update-meet-request.dto';
+import { paginatedResultStub } from 'src/shared/stub/shared.stub';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -31,7 +28,6 @@ describe('MeetRequestController', () => {
     })
       .useMocker((token) => {
         if (token === MeetRequestService) {
-          const result = paginatedResultStub(meetRequestStub());
           return {
             findOne: jest.fn(),
             find: jest.fn(),
