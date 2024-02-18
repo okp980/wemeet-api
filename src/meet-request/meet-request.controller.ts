@@ -68,7 +68,7 @@ export class MeetRequestController {
   })
   @Get()
   async find(@Request() request: any, @Query() query: GetMeetRequestDto) {
-    return this.MeetRequestService.find(request.user.id, query);
+    return this.MeetRequestService.find(request?.user?.id, query);
   }
 
   @ApiOperation({ summary: 'Get single user meet request' })
@@ -82,7 +82,7 @@ export class MeetRequestController {
     type: UnauthenticatedDto,
   })
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return this.MeetRequestService.findOne(+id);
   }
 
@@ -104,7 +104,7 @@ export class MeetRequestController {
     @Body() makeRequestDto: CreateMeetRequestDto,
     @Req() request: any,
   ) {
-    return this.MeetRequestService.create(makeRequestDto, request.user.id);
+    return this.MeetRequestService.create(makeRequestDto, request?.user?.id);
   }
 
   @ApiOperation({ summary: 'Update a meet request' })
@@ -124,7 +124,7 @@ export class MeetRequestController {
   @Patch(':id')
   async update(
     @Body() updateRequestDto: UpdateMeetRequestDto,
-    @Param('id') id: string,
+    @Param('id') id: number,
   ) {
     return this.MeetRequestService.update(+id, updateRequestDto);
   }
