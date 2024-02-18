@@ -10,6 +10,7 @@ import { Profile } from 'src/users/models/profile.model';
 import { GetMeetRequestDto } from './dto/get-meet-request.dto';
 import { Status } from './dto/meet-request.dto';
 import { PaginatedQueryDto } from 'src/shared/dto/paginated.dto';
+import { paginatedResultStub } from 'src/shared/stub/shared.stub';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -27,17 +28,6 @@ describe('MeetRequestService', () => {
     recipient,
     status: 'pending',
   };
-
-  const paginatedResult = (
-    meetRequest: typeof recipient | typeof creator | typeof MeetRequestData,
-  ) => ({
-    total: 1,
-    currentPage: 1,
-    nextPage: null,
-    previousPage: null,
-    totalPages: 1,
-    data: [meetRequest],
-  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -106,7 +96,7 @@ describe('MeetRequestService', () => {
     it('should return paginated list of meet requests', async () => {
       jest
         .spyOn(service, 'find')
-        .mockResolvedValue(paginatedResult(MeetRequestData));
+        .mockResolvedValue(paginatedResultStub(MeetRequestData));
       const result = await service.find(userId, query);
       expect(result.total).toEqual(1);
       expect(result.currentPage).toEqual(query.page);
@@ -270,7 +260,7 @@ describe('MeetRequestService', () => {
       };
       jest
         .spyOn(service, 'findMeets')
-        .mockResolvedValue(paginatedResult(recipient));
+        .mockResolvedValue(paginatedResultStub(recipient));
       const result = await service.findMeets(creator.id, query);
       expect(result.total).toEqual(1);
       expect(result.currentPage).toEqual(query.page);
