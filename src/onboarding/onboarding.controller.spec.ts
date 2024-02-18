@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OnboardingController } from './onboarding.controller';
 import { OnboardingService } from './onboarding.service';
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
+
+const moduleMocker = new ModuleMocker(global);
 
 describe('OnboardingController', () => {
   let controller: OnboardingController;
@@ -8,8 +11,21 @@ describe('OnboardingController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OnboardingController],
-      providers: [OnboardingService],
-    }).compile();
+    })
+      .useMocker((token) => {
+        const results = ['test1', 'test2'];
+        if (token === OnboardingService) {
+          return { register: jest.fn().mockResolvedValue(results) };
+        }
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
 
     controller = module.get<OnboardingController>(OnboardingController);
   });

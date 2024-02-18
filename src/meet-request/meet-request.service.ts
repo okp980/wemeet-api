@@ -1,4 +1,9 @@
-import { Injectable, Logger, MethodNotAllowedException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  MethodNotAllowedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMeetRequestDto } from './dto/create-meet-request.dto';
 import { UpdateMeetRequestDto } from './dto/update-meet-request.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -11,6 +16,8 @@ import { Profile } from 'src/users/models/profile.model';
 import { Op } from 'sequelize';
 import { GetMeetRequestDto } from './dto/get-meet-request.dto';
 import { PaginatedService } from 'src/shared/paginated.service';
+import { UsersService } from 'src/users/users.service';
+import { PaginatedQueryDto } from 'src/shared/dto/paginated.dto';
 
 @Injectable()
 export class MeetRequestService {
@@ -20,6 +27,7 @@ export class MeetRequestService {
     private meetRequestModel: typeof MeetRequest,
     private eventEmitter: EventEmitter2,
     private paginatedService: PaginatedService,
+    private userService: UsersService,
   ) {}
 
   async find(userId: number, { status, page, limit }: GetMeetRequestDto) {
@@ -36,7 +44,9 @@ export class MeetRequestService {
     );
   }
   async findOne(id: number) {
-    return await this.meetRequestModel.findByPk(id, { include: User });
+    const result = await this.meetRequestModel.findByPk(id, { include: User });
+    if (!result) throw new NotFoundException();
+    return result;
   }
   async create({ recipient }: CreateMeetRequestDto, creator: number) {
     let meet = await this.meetRequestModel.findOne({
@@ -45,15 +55,20 @@ export class MeetRequestService {
     if (meet) {
       if (meet.status === 'rejected') {
         await meet.update({ status: 'pending' });
-        await meet.save();
+        // await meet.save();
         this.eventEmitter.emit(
           'meet-request.created',
           new MeetRequestCreatedEvent(creator, recipient),
         );
         return meet;
       }
-      throw new MethodNotAllowedException('Already sent a meet request');
+      throw new MethodNotAllowedException({
+        message: 'Already sent a meet request',
+      });
     }
+    const recipientExists = await this.userService.findById(recipient);
+    if (!recipientExists)
+      throw new NotFoundException({ message: 'Recipient does not exist' });
     meet = await this.meetRequestModel.create({
       creatorId: creator,
       recipientId: recipient,
@@ -67,8 +82,9 @@ export class MeetRequestService {
 
   async update(id: number, { status }: UpdateMeetRequestDto) {
     const meetRequest = await this.meetRequestModel.findByPk(id);
+    if (!meetRequest) throw new NotFoundException();
     await meetRequest.update({ status });
-    await meetRequest.save();
+    // await meetRequest.save();
     if (status === 'accepted') {
       this.eventEmitter.emit(
         'meet-request.updated',
@@ -99,7 +115,7 @@ export class MeetRequestService {
     return friendMeets;
   }
 
-  async findMeets(userId: number, { limit = 10, page = 1 }: GetMeetRequestDto) {
+  async findMeets(userId: number, { limit = 10, page = 1 }: PaginatedQueryDto) {
     return this.paginatedService.getPaginated(
       { page, limit },
       async (startIndex: number, limit: number) => {
