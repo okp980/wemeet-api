@@ -58,10 +58,7 @@ export class UsersController {
     type: UnauthenticatedDto,
   })
   @Get()
-  findAll(
-    @Query() query: PaginatedQueryDto,
-    @Req() request: any,
-  ): Promise<PaginatedDto<UserDto>> {
-    return this.usersService.findAll(query, request.user.id);
+  findAll(@Query() query: PaginatedQueryDto, @Req() request: any) {
+    return this.usersService.findAll(query, request?.user?.id);
   }
 }
