@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -45,7 +43,5 @@ import { SharedModule } from './shared/shared.module';
     ChatModule,
     SharedModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
