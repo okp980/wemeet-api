@@ -1,16 +1,15 @@
-name: Docker
+name: Docker Image CI
 
 on:
   push:
     branches: ['main']
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build docker image and push to docker hub
-      run: docker build . -t okp980/wemeet-backend
-      run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u ${{DOCKER_USERNAME}} --password-stdin
-      run: docker push okp980/wemeet-backend
+      - uses: actions/checkout@v3
+      - run: docker build . -t okp980/wemeet-backend
+      - run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u ${{DOCKER_USERNAME}} --password-stdin
+      - run: docker push okp980/wemeet-backend
