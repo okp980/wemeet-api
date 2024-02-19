@@ -72,12 +72,14 @@ export class AuthService {
       const access_token = await this.jwtService.signAsync(token_payload);
       return { access_token };
     } catch (error) {
+      console.log(error);
+
       this.logger.error(error);
       throw new BadRequestException();
     }
   }
 
-  async verify(token: string) {
+  private async verify(token: string) {
     const client = new OAuth2Client();
     const ticket = await client.verifyIdToken({
       idToken: token,
