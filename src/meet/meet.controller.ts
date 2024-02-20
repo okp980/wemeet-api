@@ -25,7 +25,7 @@ export class MeetController {
 
   @ApiOperation({ summary: 'Get all user meets(friends)' })
   @ApiOkResponse({
-    description: 'Retrieved paginated meets(friends) successfully.',
+    description: 'Retrieved paginated meets(friends) successfully',
     schema: {
       allOf: [
         { $ref: getSchemaPath(PaginatedDto) },
